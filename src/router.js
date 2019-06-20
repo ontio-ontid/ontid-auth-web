@@ -1,25 +1,59 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import Home from './views/Home.vue'
+import Vue from "vue";
+import Router from "vue-router";
+import Home from "./views/Home.vue";
+import Login from "./views/Login.vue";
+import Regiter from "./views/Regiter.vue";
+Vue.use(Router);
 
-Vue.use(Router)
-
-export default new Router({
-  mode: 'history',
+const router = new Router({
+  mode: "history",
   base: process.env.BASE_URL,
   routes: [
     {
-      path: '/',
-      name: 'home',
+      path: "/",
+      name: "home",
       component: Home
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
+      path: "/login",
+      name: "login",
+      component: Login
+    },
+    {
+      path: "/register",
+      name: "register",
+      component: Regiter
+    },
+    {
+      path: "*",
+      redirect: "/"
     }
   ]
+});
+
+function jumpTo(target, origin, next) {
+  if (target.name !== origin.name) {
+    return next(target);
+  }
+  return next();
+}
+
+router.beforeEach(async (to, from, next) => {
+
+  let toPath = to.name
+  // console.log(toPath)
+  if (toPath === 'login' || toPath === 'register') {
+    next()
+    return
+  }
+  let ons = sessionStorage.getItem("ons");
+  // if no user_ontid then go web_home
+  if (!ons) {
+    sessionStorage.clear()
+    jumpTo({ name: 'login' }, to, next)
+    return
+  }
+  next()
 })
+
+export default router
