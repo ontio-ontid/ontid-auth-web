@@ -7,7 +7,7 @@
     </div>
     <div class="enter_ons">
       <el-input placeholder="Please input ONS: xxx.on.ont" v-model="ons" class="input-with-select">
-        <el-button @click="sendOns" type="primary" slot="append">Submit</el-button>
+        <el-button @click="sendOns" type="primary" slot="append">Apply</el-button>
       </el-input>
     </div>
     <div class="qrcode">
