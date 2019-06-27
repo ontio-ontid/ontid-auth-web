@@ -20,7 +20,7 @@ export default {
       url: '',
       dataId: '',
       getResTimer: null,
-      domain: 'ont.io'
+      domain: 'on.ont'
     }
   },
   methods: {
@@ -32,7 +32,7 @@ export default {
         params: {
           // type: 'ontid',
           // type: 'address',
-          domain: 'ont.io',
+          domain: 'on.ont',
           dappName: 'dapp Name',
           dappIcon: 'dapp Icon',
           message: info.message,

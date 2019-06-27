@@ -30,7 +30,7 @@ export default {
       url: '',
       dataId: '',
       checkTimer: null,
-      domain: 'ont.io'
+      domain: 'on.ont'
     }
   },
   mounted() {
@@ -63,7 +63,7 @@ export default {
         let res = await this.$store.dispatch('sendONS', this.ons + '.' + this.domain)
         console.log('res', res)
         if (res.data.msg === 'SUCCESS') {
-          qrcodeParams.action = 'invoke'
+          qrcodeParams.action = 'signTransaction'
           qrcodeParams.version = res.data.version
           qrcodeParams.id = res.data.result.id
           qrcodeParams.params.callback = res.data.result.callback
