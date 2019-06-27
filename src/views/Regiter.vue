@@ -1,12 +1,17 @@
 <template>
   <div class="registrer">
     <div class="title">Sign UP</div>
+    <div class="domain">Domain: {{domain}}</div>
     <div class="tips">
       Already have ONS,
       <span @click="$router.push({ path:'/login'})">SIGN IN</span>
     </div>
     <div class="enter_ons">
-      <el-input placeholder="Please input ONS: xxx.on.ont" v-model="ons" class="input-with-select">
+      <el-input
+        :placeholder="'Please input ONS: xxx.'+domain"
+        v-model="ons"
+        class="input-with-select"
+      >
         <el-button @click="sendOns" type="primary" slot="append">Apply</el-button>
       </el-input>
     </div>
@@ -24,7 +29,8 @@ export default {
       ons: '',
       url: '',
       dataId: '',
-      checkTimer: null
+      checkTimer: null,
+      domain: 'ont.io'
     }
   },
   mounted() {
@@ -54,7 +60,7 @@ export default {
       }
       let qrcodeParams = { params: { login: true } }
       try {
-        let res = await this.$store.dispatch('sendONS', this.ons)
+        let res = await this.$store.dispatch('sendONS', this.ons + '.' + this.domain)
         console.log('res', res)
         if (res.data.msg === 'SUCCESS') {
           qrcodeParams.action = 'invoke'
@@ -68,7 +74,7 @@ export default {
           this.createQRcode(qrcodeParams)
         } else {
           this.$message({
-            message: 'SignUp Fail!',
+            message: 'Sign Up Fail!',
             center: true,
             type: 'error'
           });
@@ -76,7 +82,7 @@ export default {
         }
       } catch (error) {
         this.$message({
-          message: 'SignUp Fail!',
+          message: 'Sign Up Fail!',
           center: true,
           type: 'error'
         });
@@ -90,7 +96,7 @@ export default {
         if (res.data.msg === 'SUCCESS') {
           if (res.data.result === '1') {
             this.$message({
-              message: 'SignUp Successfuly!',
+              message: 'Sign Up Successfuly!',
               center: true,
               type: 'success'
             });
@@ -100,7 +106,7 @@ export default {
           } else if (res.data.result === '0') {
             clearInterval(this.checkTimer)
             this.$message({
-              message: 'SignUp Fail!',
+              message: 'Sign Up Fail!',
               center: true,
               type: 'error'
             });
@@ -110,7 +116,7 @@ export default {
         } else {
           clearInterval(this.checkTimer)
           this.$message({
-            message: 'SignUp Fail!',
+            message: 'Sign Up Fail!',
             center: true,
             type: 'error'
           });
@@ -139,6 +145,10 @@ export default {
   height: 100%;
   max-width: 1020px;
   margin: 0 auto;
+  .domain {
+    font-size: 20px;
+    line-height: 36px;
+  }
   .title {
     font-size: 50px;
     font-weight: bold;

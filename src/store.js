@@ -26,14 +26,14 @@ export default new Vuex.Store({
     },
     async getLoginMsg({ dispatch, commit }, params) {
       try {
-        return axios.get(process.env.VUE_APP_API + "/api/v1/message");
+        return axios.get(process.env.VUE_APP_API + "/api/v1/login");
       } catch (error) {
         return error;
       }
     },
     async getLoginRes({ dispatch, commit }, params) {
       try {
-        return axios.get(process.env.VUE_APP_API + '/api/v1/message/result/' + params);
+        return axios.get(process.env.VUE_APP_API + '/api/v1/login/result/' + params);
       } catch (error) {
         return error;
       }

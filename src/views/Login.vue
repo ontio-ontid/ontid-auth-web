@@ -1,6 +1,7 @@
 <template>
   <div class="login">
     <div class="title">Sign In</div>
+    <div class="domain">Domain: {{domain}}</div>
     <div class="tips">
       Do you have ONS,
       <span @click="$router.push({ path:'/register'})">SIGN UP</span>
@@ -18,17 +19,20 @@ export default {
     return {
       url: '',
       dataId: '',
-      getResTimer: null
+      getResTimer: null,
+      domain: 'ont.io'
     }
   },
   methods: {
     createQRcode(info) {
       let codeParams = {
-        action: 'login',
+        action: 'onsLogin',
         version: 'v1.0.0',
         id: info.id,
         params: {
-          type: 'address',
+          // type: 'ontid',
+          // type: 'address',
+          domain: 'ont.io',
           dappName: 'dapp Name',
           dappIcon: 'dapp Icon',
           message: info.message,
@@ -56,7 +60,7 @@ export default {
           if (res.data.result && res.data.result.result === '1') {
             if (!res.data.result.ons) {
               this.$message({
-                message: 'Please SignUp ONS',
+                message: 'Please Sign Up ONS',
                 center: true,
                 type: 'error'
               });
@@ -67,7 +71,7 @@ export default {
               sessionStorage.setItem('ons', res.data.result.ons)
               sessionStorage.setItem('ontid', res.data.result.ontid)
               this.$message({
-                message: 'SignIn Successful',
+                message: 'Sign In Successful',
                 center: true,
                 type: 'success'
               });
@@ -78,7 +82,7 @@ export default {
           }
         } else {
           this.$message({
-            message: 'Get SignIn Result Fail!',
+            message: 'Get Sign In Result Fail!',
             center: true,
             type: 'error'
           });
@@ -124,7 +128,6 @@ export default {
         type: 'error'
       });
       return
-      return
     }
   },
   beforeDestroy() {
@@ -138,6 +141,10 @@ export default {
   height: 100%;
   max-width: 1020px;
   margin: 0 auto;
+  .domain {
+    font-size: 20px;
+    line-height: 36px;
+  }
   .title {
     font-size: 50px;
     font-weight: bold;
