@@ -16,7 +16,7 @@
       </el-input>
     </div>
     <div class="qrcode">
-      <img :src="url" alt>
+      <img :src="url" alt />
     </div>
   </div>
 </template>
@@ -58,17 +58,17 @@ export default {
         });
         return
       }
-      let qrcodeParams = { params: { login: true } }
+
       try {
-        let res = await this.$store.dispatch('sendONS', this.ons + '.' + this.domain)
+        let params = {
+          userName: this.ons
+        }
+        let res = await this.$store.dispatch('sendONS', params)
         console.log('res', res)
-        if (res.data.msg === 'SUCCESS') {
-          qrcodeParams.action = 'signTransaction'
-          qrcodeParams.version = res.data.version
-          qrcodeParams.id = res.data.result.id
-          qrcodeParams.params.callback = res.data.result.callback
-          qrcodeParams.params.qrcodeUrl = res.data.result.qrcodeUrl
-          this.dataId = res.data.result.id
+
+        if (res.data.desc === 'SUCCESS') {
+          let qrcodeParams = res.data.result
+          this.dataId = res.data.result.appId
           console.log('qrcodeParams', qrcodeParams)
           console.log('dataId', this.dataId)
           this.createQRcode(qrcodeParams)
@@ -93,8 +93,8 @@ export default {
       try {
         let res = await this.$store.dispatch('checkSignUp', this.dataId)
         console.log('checkout', res)
-        if (res.data.msg === 'SUCCESS') {
-          if (res.data.result === '1') {
+        if (res.data.desc === 'SUCCESS') {
+          if (res.data.result.result === '1') {
             this.$message({
               message: 'Sign Up Successfuly!',
               center: true,
@@ -103,10 +103,18 @@ export default {
             clearInterval(this.checkTimer)
             this.$router.push({ path: '/login' })
             return true
-          } else if (res.data.result === '0') {
+          } else if (res.data.result.result === '0') {
             clearInterval(this.checkTimer)
             this.$message({
               message: 'Sign Up Fail!',
+              center: true,
+              type: 'error'
+            });
+            return false
+          } else if (res.data.result.result === '2') {
+            clearInterval(this.checkTimer)
+            this.$message({
+              message: 'Already Registed!',
               center: true,
               type: 'error'
             });

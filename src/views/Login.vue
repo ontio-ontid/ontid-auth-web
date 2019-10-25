@@ -7,7 +7,7 @@
       <span @click="$router.push({ path:'/register'})">SIGN UP</span>
     </div>
     <div class="qrcode">
-      <img :src="url" alt>
+      <img :src="url" alt />
     </div>
   </div>
 </template>
@@ -25,22 +25,8 @@ export default {
   },
   methods: {
     createQRcode(info) {
-      let codeParams = {
-        action: 'onsLogin',
-        version: 'v1.0.0',
-        id: info.id,
-        params: {
-          // type: 'ontid',
-          // type: 'address',
-          domain: 'on.ont',
-          dappName: 'dapp Name',
-          dappIcon: 'dapp Icon',
-          message: info.message,
-          callback: info.callback
-        }
-      }
-      console.log('codeParams', codeParams)
-      codeParams = JSON.stringify(codeParams)
+      console.log('codeParams', info)
+      let codeParams = JSON.stringify(info)
       QRCode.toDataURL(codeParams)
         .then(url => {
           this.url = url
@@ -56,29 +42,27 @@ export default {
       try {
         let res = await this.$store.dispatch('getLoginRes', this.dataId)
         console.log('getLoginResult', res)
-        if (res.data.msg === 'SUCCESS') {
+        if (res.data.desc === 'SUCCESS') {
           if (res.data.result && res.data.result.result === '1') {
-            if (!res.data.result.ons) {
-              this.$message({
-                message: 'Please Sign Up ONS',
-                center: true,
-                type: 'error'
-              });
-              clearInterval(this.getResTimer)
-              this.$router.push({ path: '/register' })
-              return
-            } else {
-              sessionStorage.setItem('ons', res.data.result.ons)
-              sessionStorage.setItem('ontid', res.data.result.ontid)
-              this.$message({
-                message: 'Sign In Successful',
-                center: true,
-                type: 'success'
-              });
-              clearInterval(this.getResTimer)
-              this.$router.push({ path: '/' })
-              return
-            }
+            sessionStorage.setItem('ons', res.data.result.userName)
+            sessionStorage.setItem('ontid', res.data.result.ontid)
+            this.$message({
+              message: 'Sign In Successful',
+              center: true,
+              type: 'success'
+            });
+            clearInterval(this.getResTimer)
+            this.$router.push({ path: '/' })
+            return
+          } else if (res.data.result && res.data.result.result === '2') {
+            this.$message({
+              message: 'Please Sign Up ONS',
+              center: true,
+              type: 'error'
+            });
+            clearInterval(this.getResTimer)
+            this.$router.push({ path: '/register' })
+            return
           }
         } else {
           this.$message({
@@ -104,14 +88,10 @@ export default {
     try {
       let result = await this.$store.dispatch('getLoginMsg')
       console.log('loginmsg', result)
-      if (result.data.msg === 'SUCCESS') {
-        let info = {
-          id: result.data.result.id,
-          message: result.data.result.message,
-          callback: result.data.result.callback,
-        }
+      if (result.data.desc === 'SUCCESS') {
+        let info = result.data.result
         console.log('info', info)
-        this.dataId = result.data.result.id
+        this.dataId = result.data.result.appId
         this.createQRcode(info)
       } else {
         this.$message({

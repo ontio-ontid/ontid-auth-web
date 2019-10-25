@@ -1,12 +1,13 @@
 <template>
   <div class="home">
     <div class="account_name">
-      welcome!
-      <span>{{ons}}</span>
+      Welcome!
+      <span class="ons">{{ons}}</span>
+      <span>(ONT ID: {{ontid}})</span>
       <el-button @click="signOut" size="small" round style="margin-left: 20px;">Sign Out</el-button>
     </div>
     <p>
-      <el-button type="primary" @click="getMsg()">Contract</el-button>
+      <el-button type="primary" @click="getMsg()">Hello World</el-button>
     </p>
     <div class="qrcode">
       <img :src="url" alt>
@@ -42,12 +43,9 @@ export default {
     async getMsg() {
       try {
         let res = await this.$store.dispatch('getInvokeMsg')
-        if (res.data.msg === 'SUCCESS') {
-          let info = { params: {} }
-          info.id = res.data.result.id
-          info.params.callback = res.data.result.callback
-          info.params.qrcodeUrl = res.data.result.qrcodeUrl
-          this.dataId = res.data.result.id
+        if (res.data.desc === 'SUCCESS') {
+          let info = res.data.result
+          this.dataId = res.data.result.appId
           this.createQRcode(info)
         } else {
           this.$message({
@@ -67,16 +65,7 @@ export default {
       }
     },
     createQRcode(info) {
-      let qrParams = {
-        action: 'invoke',
-        version: 'v1.0.0',
-        id: info.id,
-        params: {
-          login: true,
-          callback: info.params.callback,
-          qrcodeUrl: info.params.qrcodeUrl
-        }
-      }
+      let qrParams = info
       console.log('qrParams', qrParams)
       qrParams = JSON.stringify(qrParams)
       QRCode.toDataURL(qrParams)
@@ -94,8 +83,8 @@ export default {
       try {
         let res = await this.$store.dispatch('checkInvoke', this.dataId)
         console.log('getInvokeResult', res)
-        if (res.data.msg === 'SUCCESS') {
-          if (res.data.result === '1') {
+        if (res.data.desc === 'SUCCESS') {
+          if (res.data.result.result === '1') {
             this.$message({
               message: 'Transfer Contract Successful!',
               center: true,
@@ -105,7 +94,7 @@ export default {
             this.url = ''
             this.dataId = ''
             return true
-          } else if (res.data.result === '0') {
+          } else if (res.data.result.result === '0') {
             this.$message({
               message: 'Transfer Contract Fail!',
               center: true,
@@ -147,12 +136,16 @@ export default {
   max-width: 1020px;
   margin: 0 auto;
   .account_name {
-    font-size: 30px;
+    font-size: 22px;
     line-height: 100px;
     padding-top: 100px;
     span {
       color: red;
       text-decoration: underline;
+    }
+    .ons {
+      margin-right: 20px;
+      margin-left: 20px;
     }
     .el-button {
       background: #000;

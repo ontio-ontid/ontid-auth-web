@@ -1,8 +1,8 @@
-import Vue from "vue";
-import Vuex from "vuex";
-import axios from "axios";
+import Vue from 'vue'
+import Vuex from 'vuex'
+import axios from 'axios'
 
-Vue.use(Vuex);
+Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {},
@@ -10,47 +10,51 @@ export default new Vuex.Store({
   actions: {
     async sendONS({ dispatch, commit }, params) {
       try {
-        return axios.get(process.env.VUE_APP_API + "/api/v1/ons/" + params);
+        return axios.post(process.env.VUE_APP_API + '/app/register', params)
       } catch (error) {
-        return error;
+        return error
       }
     },
     async checkSignUp({ dispatch, commit }, params) {
       try {
         return axios.get(
-          process.env.VUE_APP_API + "/api/v1/ons/result/" + params
-        );
+          process.env.VUE_APP_API + '/app/register/result/' + params
+        )
       } catch (error) {
-        return error;
+        return error
       }
     },
     async getLoginMsg({ dispatch, commit }, params) {
       try {
-        return axios.get(process.env.VUE_APP_API + "/api/v1/login");
+        return axios.post(process.env.VUE_APP_API + '/app/login')
       } catch (error) {
-        return error;
+        return error
       }
     },
     async getLoginRes({ dispatch, commit }, params) {
       try {
-        return axios.get(process.env.VUE_APP_API + '/api/v1/login/result/' + params);
+        return axios.get(
+          process.env.VUE_APP_API + '/app/login/result/' + params
+        )
       } catch (error) {
-        return error;
+        return error
       }
     },
     async getInvokeMsg({ dispatch, commit }, params) {
       try {
-        return axios.get(process.env.VUE_APP_API + '/api/v1/invoke')
+        return axios.post(process.env.VUE_APP_API + '/app/invoke')
       } catch (error) {
         return error
       }
     },
     async checkInvoke({ dispatch, commit }, params) {
       try {
-        return axios.get(process.env.VUE_APP_API + '/api/v1/invoke/result/' + params)
+        return axios.get(
+          process.env.VUE_APP_API + '/app/invoke/result/' + params
+        )
       } catch (error) {
         return error
       }
     }
   }
-});
+})
