@@ -155,7 +155,6 @@ export default {
   .qrcode {
     width: 200px;
     height: 200px;
-    // background: tomato;
     margin: 0 auto;
     margin-top: 100px;
     img {
