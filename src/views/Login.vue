@@ -3,7 +3,7 @@
     <div class="title">Sign In</div>
     <div class="domain">Domain: {{domain}}</div>
     <div class="tips">
-      Do you have ONS,
+      Do you have username,
       <span @click="$router.push({ path:'/register'})">SIGN UP</span>
     </div>
     <div class="qrcode">

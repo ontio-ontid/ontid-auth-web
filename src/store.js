@@ -42,7 +42,7 @@ export default new Vuex.Store({
     },
     async getInvokeMsg({ dispatch, commit }, params) {
       try {
-        return axios.post(process.env.VUE_APP_API + '/app/invoke')
+        return axios.post(process.env.VUE_APP_API + '/app/invoke/' + params)
       } catch (error) {
         return error
       }

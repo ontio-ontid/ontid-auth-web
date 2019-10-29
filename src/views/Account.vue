@@ -2,7 +2,7 @@
     <div class="account">
         <div class="select_box">
             <h2>
-                Do you have ONS?
+                Do you have username?
             </h2>
         </div>
         <router-view/>

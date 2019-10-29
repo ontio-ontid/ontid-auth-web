@@ -3,12 +3,12 @@
     <div class="title">Sign UP</div>
     <div class="domain">Domain: {{domain}}</div>
     <div class="tips">
-      Already have ONS,
+      Already have username,
       <span @click="$router.push({ path:'/login'})">SIGN IN</span>
     </div>
     <div class="enter_ons">
       <el-input
-        :placeholder="'Please input ONS: xxx.'+domain"
+        :placeholder="'Please input username: xxx.'+domain"
         v-model="ons"
         class="input-with-select"
       >

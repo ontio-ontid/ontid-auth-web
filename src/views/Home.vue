@@ -42,7 +42,7 @@ export default {
     },
     async getMsg() {
       try {
-        let res = await this.$store.dispatch('getInvokeMsg')
+        let res = await this.$store.dispatch('getInvokeMsg', this.ons)
         if (res.data.desc === 'SUCCESS') {
           let info = res.data.result
           this.dataId = res.data.result.appId
