@@ -21,6 +21,17 @@ axios.interceptors.request.use(
     return Promise.reject(err);
   }
 );
+// response interceptor
+axios.interceptors.response.use(
+  response => {
+    console.log('errrr', response)
+    return response
+  },
+  error => {
+    console.log('err' + error) // for debug
+    return Promise.reject(error)
+  }
+)
 Vue.config.productionTip = false;
 Vue.prototype.$http = axios;
 new Vue({

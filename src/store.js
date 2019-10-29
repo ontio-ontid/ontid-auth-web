@@ -10,7 +10,7 @@ export default new Vuex.Store({
   actions: {
     async sendONS({ dispatch, commit }, params) {
       try {
-        return axios.post(process.env.VUE_APP_API + '/app/register', params)
+        return axios.post(process.env.VUE_APP_API + '/app/register/claim', params)
       } catch (error) {
         return error
       }
@@ -51,6 +51,22 @@ export default new Vuex.Store({
       try {
         return axios.get(
           process.env.VUE_APP_API + '/app/invoke/result/' + params
+        )
+      } catch (error) {
+        return error
+      }
+    },
+    async getClaimMsg({dispatch, commit}, params) {
+      try {
+        return axios.post(process.env.VUE_APP_API + '/app/claim')
+      } catch (error) {
+        return error
+      }
+    },
+    async checkClaim({dispatch, commit}, params) {
+      try {
+        return axios.get(
+          process.env.VUE_APP_API + '/app/claim/result/' + params
         )
       } catch (error) {
         return error

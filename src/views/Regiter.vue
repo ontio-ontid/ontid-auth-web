@@ -7,13 +7,13 @@
       <span @click="$router.push({ path:'/login'})">SIGN IN</span>
     </div>
     <div class="enter_ons">
-      <el-input
-        placeholder="Create a new account name"
-        v-model="ons"
-        class="input-with-select"
-      >
-        <el-button @click="sendOns" type="primary" slot="append">Apply</el-button>
+      <el-input placeholder="Create a new account name" v-model="ons" class="input-with-select">
+        <el-button @click="apply" type="primary" slot="append">Apply</el-button>
       </el-input>
+    </div>
+    <div class="claim_tips">
+      <span v-if="claim_flag">Please perform the authorization operation first.</span>
+      <span v-if="account_flag">Perform registration authorization</span>
     </div>
     <div class="qrcode">
       <img :src="url" alt />
@@ -30,7 +30,11 @@ export default {
       url: '',
       dataId: '',
       checkTimer: null,
-      domain: 'on.ont'
+      domain: 'on.ont',
+      claim_flag: false,
+      account_flag: false,
+      claimCheckId: '',
+      claimTimer: null
     }
   },
   mounted() {
@@ -45,20 +49,21 @@ export default {
         })
         .catch(err => {
         })
-      this.checkTimer = setInterval(() => {
-        this.checkResult()
-      }, 3000)
     },
-    async sendOns() {
+    apply() {
       if (this.ons === '') {
         this.$message({
-          message: 'Please Input Yours ONS!',
+          message: 'Please Input Your account name!',
           center: true,
           type: 'success'
         });
         return
       }
-
+      // claim 授权
+      this.claim_flag = true
+      this.postChaim()
+    },
+    async sendOns() {
       try {
         let params = {
           userName: this.ons
@@ -71,7 +76,12 @@ export default {
           this.dataId = res.data.result.appId
           console.log('qrcodeParams', qrcodeParams)
           console.log('dataId', this.dataId)
-          this.createQRcode(qrcodeParams)
+          // 生成注册二维码
+          await this.createQRcode(qrcodeParams)
+          // 检查注册结果
+          this.checkTimer = setInterval(() => {
+            this.checkResult()
+          }, 3000)
         } else {
           this.$message({
             message: 'Sign Up Fail!',
@@ -86,7 +96,7 @@ export default {
           center: true,
           type: 'error'
         });
-        return
+        return false
       }
     },
     async checkResult() {
@@ -139,10 +149,89 @@ export default {
         });
         return false
       }
+    },
+    async postChaim() {
+      try {
+        let res = await this.$store.dispatch('getClaimMsg')
+        console.log('claim res', res)
+        if (res.data.desc === 'SUCCESS') {
+          let qrcodeParams = res.data.result
+          this.claimCheckId = res.data.result.appId
+          console.log('qrcodeParams', qrcodeParams)
+          console.log('dataId', this.dataId)
+          // 生成claim二维码
+          await this.createQRcode(qrcodeParams)
+          // 检查注册结果
+          // this.claimTimer = setInterval(() => {
+          //   this.CheckClaimResult()
+          // }, 3000)
+        } else {
+          this.$message({
+            message: 'Sign Up Fail!',
+            center: true,
+            type: 'error'
+          });
+          return
+        }
+      } catch (error) {
+        this.$message({
+          message: 'Authorization Failure!',
+          center: true,
+          type: 'error'
+        });
+        return false
+      }
+    },
+    async CheckClaimResult() {
+      try {
+        let res = await this.$store.dispatch('checkClaim', this.claimCheckId)
+        console.log('checkout', res)
+        if (res.data.desc === 'SUCCESS') {
+          if (res.data.result.result === '1') {
+            this.$message({
+              message: 'Authorized Success!',
+              center: true,
+              type: 'success'
+            });
+            clearInterval(this.claimTimer)
+            // this.$router.push({ path: '/login' })
+            this.claim_flag = false
+            this.account_flag = true
+            this.sendOns()
+            return true
+          } else if (res.data.result.result === '0') {
+            clearInterval(this.claimTimer)
+            this.$message({
+              message: 'Authorization Failure!',
+              center: true,
+              type: 'error'
+            });
+            return false
+          } else { }
+
+        } else {
+          clearInterval(this.claimTimer)
+          this.$message({
+            message: 'Authorization Failure!',
+            center: true,
+            type: 'error'
+          });
+          return false
+        }
+      } catch (error) {
+        clearInterval(this.claimTimer)
+        this.$message({
+          message: error,
+          center: true,
+          type: 'error'
+        });
+        return false
+      }
     }
   },
   beforeDestroy() {
     clearInterval(this.checkTimer)
+    clearInterval(this.claimTimer)
   },
 }
 </script>
@@ -156,6 +245,10 @@ export default {
   .domain {
     font-size: 20px;
     line-height: 36px;
+  }
+  .claim_tips {
+    font-size: 20px;
+    margin-top: 30px;
   }
   .title {
     font-size: 50px;
