@@ -1,14 +1,14 @@
 <template>
   <div class="registrer">
-    <div class="title">Sign UP</div>
+    <div class="title">Sign Up</div>
     <div class="domain">Domain: {{domain}}</div>
     <div class="tips">
-      Already have username,
+      Already have an account?
       <span @click="$router.push({ path:'/login'})">SIGN IN</span>
     </div>
     <div class="enter_ons">
       <el-input
-        :placeholder="'Please input username: xxx.'+domain"
+        placeholder="Create a new account name"
         v-model="ons"
         class="input-with-select"
       >

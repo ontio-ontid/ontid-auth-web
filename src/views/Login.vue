@@ -3,7 +3,7 @@
     <div class="title">Sign In</div>
     <div class="domain">Domain: {{domain}}</div>
     <div class="tips">
-      Do you have username,
+      No account yet?,
       <span @click="$router.push({ path:'/register'})">SIGN UP</span>
     </div>
     <div class="qrcode">
@@ -144,7 +144,7 @@ export default {
     height: 200px;
     margin: 0 auto;
     margin-top: 50px;
-    background: tomato;
+    // background: tomato;
     img {
       width: 100%;
       height: 100%;
