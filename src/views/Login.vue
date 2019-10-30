@@ -53,7 +53,7 @@ export default {
             });
             clearInterval(this.getResTimer)
             this.$router.push({ path: '/' })
-            return
+            return false
           } else if (res.data.result && res.data.result.result === '2') {
             this.$message({
               message: 'Please Sign Up ONS',
@@ -62,7 +62,7 @@ export default {
             });
             clearInterval(this.getResTimer)
             this.$router.push({ path: '/register' })
-            return
+            return false
           }
         } else {
           this.$message({
@@ -71,16 +71,11 @@ export default {
             type: 'error'
           });
           clearInterval(this.getResTimer)
-          return
+          return false
         }
       } catch (error) {
-        this.$message({
-          message: error,
-          center: true,
-          type: 'error'
-        });
         clearInterval(this.getResTimer)
-        return
+        return false
       }
     }
   },
@@ -99,15 +94,10 @@ export default {
           center: true,
           type: 'error'
         });
-        return
+        return false
       }
     } catch (error) {
-      this.$message({
-        message: error,
-        center: true,
-        type: 'error'
-      });
-      return
+      return false
     }
   },
   beforeDestroy() {
