@@ -37,9 +37,6 @@ export default {
       claimTimer: null
     }
   },
-  mounted() {
-    // console.log(process.env.VUE_APP_API)
-  },
   methods: {
     createQRcode(params) {
       params = JSON.stringify(params)
@@ -71,7 +68,7 @@ export default {
         let res = await this.$store.dispatch('sendONS', params)
         console.log('res', res)
 
-        if (res.data.desc === 'SUCCESS') {
+        if (res.data.desc === 'SUCCESS' && res.data.error === 0) {
           let qrcodeParams = res.data.result
           this.dataId = res.data.result.appId
           console.log('qrcodeParams', qrcodeParams)
@@ -91,11 +88,7 @@ export default {
           return
         }
       } catch (error) {
-        this.$message({
-          message: 'Sign Up Fail!',
-          center: true,
-          type: 'error'
-        });
+        throw error
         return false
       }
     },
@@ -142,11 +135,6 @@ export default {
         }
       } catch (error) {
         clearInterval(this.checkTimer)
-        this.$message({
-          message: error,
-          center: true,
-          type: 'error'
-        });
         return false
       }
     },

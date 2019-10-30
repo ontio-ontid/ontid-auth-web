@@ -53,15 +53,10 @@ export default {
             center: true,
             type: 'error'
           });
-          return
+          return false
         }
       } catch (error) {
-        this.$message({
-          message: error,
-          center: true,
-          type: 'error'
-        });
-        return
+        return false
       }
     },
     createQRcode(info) {
@@ -113,11 +108,6 @@ export default {
           return false
         }
       } catch (error) {
-        this.$message({
-          message: error,
-          center: true,
-          type: 'error'
-        });
         clearInterval(this.invokeTimer)
         return false
       }
