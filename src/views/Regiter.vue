@@ -150,9 +150,9 @@ export default {
           // 生成claim二维码
           await this.createQRcode(qrcodeParams)
           // 检查注册结果
-          // this.claimTimer = setInterval(() => {
-          //   this.CheckClaimResult()
-          // }, 3000)
+          this.claimTimer = setInterval(() => {
+            this.CheckClaimResult()
+          }, 3000)
         } else {
           this.$message({
             message: 'Sign Up Fail!',
@@ -162,11 +162,11 @@ export default {
           return
         }
       } catch (error) {
-        this.$message({
-          message: 'Authorization Failure!',
-          center: true,
-          type: 'error'
-        });
+        // this.$message({
+        //   message: 'Authorization Failure!',
+        //   center: true,
+        //   type: 'error'
+        // });
         return false
       }
     },
@@ -208,11 +208,11 @@ export default {
         }
       } catch (error) {
         clearInterval(this.claimTimer)
-        this.$message({
-          message: error,
-          center: true,
-          type: 'error'
-        });
+        // this.$message({
+        //   message: error,
+        //   center: true,
+        //   type: 'error'
+        // });
         return false
       }
     }
