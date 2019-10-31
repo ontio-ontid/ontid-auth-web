@@ -12,8 +12,8 @@
       </el-input>
     </div>
     <div class="claim_tips">
-      <span v-if="claim_flag">Please perform the authorization operation first.</span>
-      <span v-if="account_flag">Perform registration authorization</span>
+      <span v-if="claim_flag">Scan to perform authorization.</span>
+      <span v-if="account_flag">Scan to confirm registration.</span>
     </div>
     <div class="qrcode">
       <img :src="url" alt />
