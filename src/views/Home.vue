@@ -9,6 +9,9 @@
     <p>
       <el-button type="primary" @click="getMsg()">Hello World</el-button>
     </p>
+    <div class="hex" v-if="hash">
+      TxHash: {{hash}}
+    </div>
     <div class="qrcode">
       <img :src="url" alt>
     </div>
@@ -28,7 +31,8 @@ export default {
       ontid: '',
       dataId: '',
       url: '',
-      invokeTimer: null
+      invokeTimer: null,
+      hash: ''
     }
   },
   mounted() {
@@ -88,6 +92,7 @@ export default {
             clearInterval(this.invokeTimer)
             this.url = ''
             this.dataId = ''
+            this.hash = res.data.result.txHash
             return true
           } else if (res.data.result.result === '0') {
             this.$message({
@@ -141,6 +146,11 @@ export default {
       background: #000;
       color: #fff;
     }
+  }
+  .hex {
+    line-height: 30px;
+    font-size: 22px;
+    margin-top: 20px;
   }
   .qrcode {
     width: 200px;
