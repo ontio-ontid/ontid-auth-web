@@ -144,7 +144,7 @@ export default {
         console.log('claim res', res)
         if (res.data.desc === 'SUCCESS') {
           let qrcodeParams = res.data.result
-          this.claimCheckId = res.data.result.appId
+          this.claimCheckId = res.data.result.id
           console.log('qrcodeParams', qrcodeParams)
           console.log('dataId', this.dataId)
           // 生成claim二维码
