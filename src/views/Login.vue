@@ -111,6 +111,7 @@ export default {
   height: 100%;
   max-width: 1020px;
   margin: 0 auto;
+  text-align: center;
   .domain {
     font-size: 20px;
     line-height: 36px;

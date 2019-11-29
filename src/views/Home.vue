@@ -2,18 +2,19 @@
   <div class="home">
     <div class="account_name">
       Welcome!
-      <span class="ons">{{ons}}</span>
-      <span>(ONT ID: {{ontid}})</span>
-      <el-button @click="signOut" size="small" round style="margin-left: 20px;">Sign Out</el-button>
+      <span class="ons">{{ ons }}</span>
+      <span>(ONT ID: {{ ontid }})</span>
+      <el-button @click="signOut" size="small" round style="margin-left: 20px;"
+        >Sign Out</el-button
+      >
     </div>
-    <p>
-      <el-button type="primary" @click="getMsg()">Hello World</el-button>
-    </p>
-    <div class="hex" v-if="hash">
-      TxHash: {{hash}}
-    </div>
-    <div class="qrcode">
-      <img :src="url" alt>
+    <div class="claim_wrap">
+      <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="Apply Claim" name="applyClaim"></el-tab-pane>
+        <el-tab-pane label="Get Claim" name="getClaim"></el-tab-pane>
+      </el-tabs>
+      <Applyclaim-div v-if="activeName === 'applyClaim'"></Applyclaim-div>
+      <GetClaim-div v-else></GetClaim-div>
     </div>
   </div>
 </template>
@@ -21,7 +22,9 @@
 <script>
 // @ is an alias to /src
 import QRCode from 'qrcode'
-import { setInterval, clearInterval } from 'timers';
+import { setInterval, clearInterval } from 'timers'
+import ApplyclaimDiv from './ApplyClaim'
+import GetClaimDiv from './GetClaim'
 
 export default {
   name: 'home',
@@ -32,8 +35,13 @@ export default {
       dataId: '',
       url: '',
       invokeTimer: null,
-      hash: ''
+      hash: '',
+      activeName: 'applyClaim'
     }
+  },
+  components: {
+    ApplyclaimDiv,
+    GetClaimDiv
   },
   mounted() {
     this.ons = sessionStorage.getItem('ons')
@@ -56,7 +64,7 @@ export default {
             message: 'Get Invoke Message Fail!',
             center: true,
             type: 'error'
-          });
+          })
           return false
         }
       } catch (error) {
@@ -71,8 +79,7 @@ export default {
         .then(url => {
           this.url = url
         })
-        .catch(err => {
-        })
+        .catch(err => {})
 
       this.invokeTimer = setInterval(() => {
         this.getInvokeResult()
@@ -88,7 +95,7 @@ export default {
               message: 'Transfer Contract Successful!',
               center: true,
               type: 'success'
-            });
+            })
             clearInterval(this.invokeTimer)
             this.url = ''
             this.dataId = ''
@@ -99,16 +106,17 @@ export default {
               message: 'Transfer Contract Fail!',
               center: true,
               type: 'error'
-            });
+            })
             clearInterval(this.invokeTimer)
             return false
-          } else { }
+          } else {
+          }
         } else {
           this.$message({
             message: 'Transfer Contract Fail!',
             center: true,
             type: 'error'
-          });
+          })
           clearInterval(this.invokeTimer)
           return false
         }
@@ -116,11 +124,14 @@ export default {
         clearInterval(this.invokeTimer)
         return false
       }
+    },
+    handleClick(tab, event) {
+      console.log(tab, event)
     }
   },
   beforeDestroy() {
     clearInterval(this.invokeTimer)
-  },
+  }
 }
 </script>
 
@@ -134,6 +145,7 @@ export default {
     font-size: 22px;
     line-height: 100px;
     padding-top: 100px;
+    text-align: center;
     span {
       color: red;
       text-decoration: underline;
@@ -164,5 +176,8 @@ export default {
     }
   }
 }
+.claim_wrap {
+  width: 600px;
+  margin: 40px auto;
+}
 </style>
-
