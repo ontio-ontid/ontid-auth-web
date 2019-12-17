@@ -1,137 +1,113 @@
 <template>
   <div class="registrer">
     <div class="title">Sign Up</div>
-    <div class="domain">Domain: {{domain}}</div>
+    <div class="domain">Domain: {{ domain }}</div>
     <div class="tips">
       Already have an account?
-      <span @click="$router.push({ path:'/login'})">SIGN IN</span>
+      <span @click="$router.push({ path: '/login' })">SIGN IN</span>
     </div>
     <div class="enter_ons">
-      <el-input
-        placeholder="Create a new account name"
-        v-model="ons"
-        class="input-with-select"
-      >
-        <el-button @click="sendOns" type="primary" slot="append">Apply</el-button>
-      </el-input>
-    </div>
-    <div class="qrcode">
-      <img :src="url" alt />
+      <div class="form_area">
+        <el-form
+          :model="ruleForm"
+          :rules="rules"
+          ref="ruleForm"
+          label-width="100px"
+          class="demo-ruleForm"
+          status-icon
+        >
+          <el-form-item label="username" prop="userName">
+            <el-input autocomplete="off" v-model="ruleForm.userName"></el-input>
+          </el-form-item>
+          <el-form-item label="password" prop="password">
+            <el-input
+              type="password"
+              autocomplete="off"
+              v-model="ruleForm.password"
+            ></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="submitForm('ruleForm')"
+              >Sign up</el-button
+            >
+          </el-form-item>
+        </el-form>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import QRCode from 'qrcode'
 export default {
   data() {
     return {
-      ons: '',
-      url: '',
-      dataId: '',
-      checkTimer: null,
-      domain: 'on.ont'
+      domain: 'on.ont',
+      ruleForm: {
+        password: '',
+        userName: ''
+      },
+      rules: {
+        userName: [
+          {
+            required: true,
+            message: 'Please enter username',
+            trigger: 'change'
+          },
+          {
+            min: 2,
+            max: 10,
+            message: '2 to 10 characters in length',
+            trigger: 'change'
+          }
+        ],
+        password: [
+          {
+            required: true,
+            pattern: /\S/,
+            message: 'Please enter password',
+            trigger: 'change'
+          }
+        ]
+      }
     }
   },
   methods: {
-    createQRcode(params) {
-      params = JSON.stringify(params)
-      QRCode.toDataURL(params)
-        .then(url => {
-          this.url = url
-        })
-        .catch(err => {
-        })
-      this.checkTimer = setInterval(() => {
-        this.checkResult()
-      }, 3000)
-    },
-    async sendOns() {
-      if (this.ons === '') {
-        this.$message({
-          message: 'Please Input Yours ONS!',
-          center: true,
-          type: 'success'
-        });
-        return
-      }
-
-      try {
-        let params = {
-          userName: this.ons
-        }
-        let res = await this.$store.dispatch('sendONS', params)
-        console.log('res', res)
-
-        if (res.data.desc === 'SUCCESS' && res.data.error === 0) {
-          let qrcodeParams = res.data.result
-          this.dataId = res.data.result.appId
-          console.log('qrcodeParams', qrcodeParams)
-          console.log('dataId', this.dataId)
-          this.createQRcode(qrcodeParams)
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.register()
         } else {
-          this.$message({
-            message: 'Sign Up Fail!',
-            center: true,
-            type: 'error'
-          });
-          return
-        }
-      } catch (error) {
-        throw error
-        return false
-      }
-    },
-    async checkResult() {
-      try {
-        let res = await this.$store.dispatch('checkSignUp', this.dataId)
-        console.log('checkout', res)
-        if (res.data.desc === 'SUCCESS') {
-          if (res.data.result.result === '1') {
-            this.$message({
-              message: 'Sign Up Successfuly!',
-              center: true,
-              type: 'success'
-            });
-            clearInterval(this.checkTimer)
-            this.$router.push({ path: '/login' })
-            return true
-          } else if (res.data.result.result === '0') {
-            clearInterval(this.checkTimer)
-            this.$message({
-              message: 'Sign Up Fail!',
-              center: true,
-              type: 'error'
-            });
-            return false
-          } else if (res.data.result.result === '2') {
-            clearInterval(this.checkTimer)
-            this.$message({
-              message: 'Already Registed!',
-              center: true,
-              type: 'error'
-            });
-            return false
-          } else { }
-
-        } else {
-          clearInterval(this.checkTimer)
-          this.$message({
-            message: 'Sign Up Fail!',
-            center: true,
-            type: 'error'
-          });
+          console.log('error submit!!')
           return false
         }
+      })
+    },
+    async register() {
+      try {
+        let apiData = await this.$store.dispatch('registerAcc', this.ruleForm)
+        const { desc, result } = apiData.data
+        if (desc === 'SUCCESS') {
+          this.$message({
+            message: 'Sign up Successful!',
+            center: true,
+            type: 'success'
+          })
+          sessionStorage.setItem('ons', result.userName)
+          sessionStorage.setItem('ontid', result.ontid)
+          this.$router.push({ path: '/' })
+        } else {
+          this.$message({
+            message: 'Sign up Fail!',
+            center: true,
+            type: 'error'
+          })
+        }
+        console.log(result)
       } catch (error) {
-        clearInterval(this.checkTimer)
-        return false
+        throw error
       }
     }
-  },
-  beforeDestroy() {
-    clearInterval(this.checkTimer)
-  },
+  }
 }
 </script>
 

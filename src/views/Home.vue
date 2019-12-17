@@ -2,26 +2,38 @@
   <div class="home">
     <div class="account_name">
       Welcome!
-      <span class="ons">{{ons}}</span>
-      <span>(ONT ID: {{ontid}})</span>
-      <el-button @click="signOut" size="small" round style="margin-left: 20px;">Sign Out</el-button>
+      <span class="ons">{{ ons }}</span>
+      <span>(ONT ID: {{ ontid }})</span>
+      <el-button @click="signOut" size="small" round style="margin-left: 20px;"
+        >Sign Out</el-button
+      >
     </div>
-    <p>
-      <el-button type="primary" @click="getMsg()">Hello World</el-button>
-    </p>
-    <div class="hex" v-if="hash">
-      TxHash: {{hash}}
-    </div>
-    <div class="qrcode">
-      <img :src="url" alt>
-    </div>
+    <p></p>
+    <el-card class="box-card" style="margin-top: 20px;">
+      <div slot="header" class="clearfix">
+        <el-button type="primary" @click="getMsg()">Hello World</el-button>
+      </div>
+      <div class="hex" v-if="hash">TxHash: {{ hash }}</div>
+      <div class="qrcode">
+        <img :src="url" alt />
+      </div>
+    </el-card>
+    <el-card class="box-card" style="margin-top: 20px;">
+      <div slot="header" class="clearfix">
+        <el-button @click="addOwnder">Add Owner</el-button>
+      </div>
+      <div class="hex" v-if="ownerHash">TxHash: {{ ownerHash }}</div>
+      <div class="qrcode">
+        <img :src="ownerUrl" alt />
+      </div>
+    </el-card>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
 import QRCode from 'qrcode'
-import { setInterval, clearInterval } from 'timers';
+import { setInterval, clearInterval } from 'timers'
 
 export default {
   name: 'home',
@@ -32,7 +44,11 @@ export default {
       dataId: '',
       url: '',
       invokeTimer: null,
-      hash: ''
+      hash: '',
+      ownerHash: '',
+      ownerUrl: '',
+      ownerCheckId: '',
+      ownerTimer: null
     }
   },
   mounted() {
@@ -56,7 +72,7 @@ export default {
             message: 'Get Invoke Message Fail!',
             center: true,
             type: 'error'
-          });
+          })
           return false
         }
       } catch (error) {
@@ -71,8 +87,7 @@ export default {
         .then(url => {
           this.url = url
         })
-        .catch(err => {
-        })
+        .catch(err => {})
 
       this.invokeTimer = setInterval(() => {
         this.getInvokeResult()
@@ -88,7 +103,7 @@ export default {
               message: 'Transfer Contract Successful!',
               center: true,
               type: 'success'
-            });
+            })
             clearInterval(this.invokeTimer)
             this.url = ''
             this.dataId = ''
@@ -99,16 +114,17 @@ export default {
               message: 'Transfer Contract Fail!',
               center: true,
               type: 'error'
-            });
+            })
             clearInterval(this.invokeTimer)
             return false
-          } else { }
+          } else {
+          }
         } else {
           this.$message({
             message: 'Transfer Contract Fail!',
             center: true,
             type: 'error'
-          });
+          })
           clearInterval(this.invokeTimer)
           return false
         }
@@ -116,11 +132,60 @@ export default {
         clearInterval(this.invokeTimer)
         return false
       }
+    },
+    async addOwnder() {
+      let apiData = await this.$store.dispatch('addOwner', this.ontid)
+      console.log(apiData)
+      const { desc, result } = apiData.data
+      if (desc === 'SUCCESS') {
+        let qrParams = JSON.stringify(result)
+        this.ownerUrl = await QRCode.toDataURL(qrParams)
+        this.ownerCheckId = result.id
+        this.ownerTimer = setInterval(() => {
+          this.checkOwnerResult()
+        }, 3000)
+      } else {
+        this.$message({
+          message: 'Get info fail!',
+          center: true,
+          type: 'error'
+        })
+      }
+    },
+    async checkOwnerResult() {
+      let apiData = await this.$store.dispatch('checkInvoke', this.ownerCheckId)
+      console.log('owner id', apiData)
+      const { desc, result } = apiData.data
+      if (desc === 'SUCCESS') {
+        if (result.result === '1') {
+          this.$message({
+            message: 'Transfer Contract Successful!',
+            center: true,
+            type: 'success'
+          })
+          clearInterval(this.ownerCheckId)
+          // this.url = ''
+          // this.dataId = ''
+          // this.hash = result.txHash
+          return true
+        } else if (result.result === '0') {
+          this.$message({
+            message: 'Transfer Contract Fail!',
+            center: true,
+            type: 'error'
+          })
+          clearInterval(this.ownerCheckId)
+          return false
+        } else {
+        }
+      } else {
+        clearInterval(this.ownerCheckId)
+      }
     }
   },
   beforeDestroy() {
     clearInterval(this.invokeTimer)
-  },
+  }
 }
 </script>
 
@@ -129,6 +194,7 @@ export default {
   width: 100%;
   height: 100%;
   max-width: 1020px;
+  min-width: 500px;
   margin: 0 auto;
   .account_name {
     font-size: 22px;
@@ -156,7 +222,6 @@ export default {
     width: 200px;
     height: 200px;
     margin: 0 auto;
-    margin-top: 100px;
     img {
       width: 100%;
       height: 100%;
@@ -165,4 +230,3 @@ export default {
   }
 }
 </style>
-

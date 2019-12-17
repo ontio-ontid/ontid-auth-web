@@ -10,7 +10,10 @@ export default new Vuex.Store({
   actions: {
     async sendONS({ dispatch, commit }, params) {
       try {
-        return axios.post(process.env.VUE_APP_API + '/api/v1/app/register', params)
+        return axios.post(
+          process.env.VUE_APP_API + '/api/v1/app/register',
+          params
+        )
       } catch (error) {
         return error
       }
@@ -42,7 +45,9 @@ export default new Vuex.Store({
     },
     async getInvokeMsg({ dispatch, commit }, params) {
       try {
-        return axios.post(process.env.VUE_APP_API + '/api/v1/app/invoke/' + params)
+        return axios.post(
+          process.env.VUE_APP_API + '/api/v1/app/invoke/' + params
+        )
       } catch (error) {
         return error
       }
@@ -50,11 +55,25 @@ export default new Vuex.Store({
     async checkInvoke({ dispatch, commit }, params) {
       try {
         return axios.get(
-          process.env.VUE_APP_API + '/api/v1/app/invoke/result/' + params
+          process.env.VUE_APP_API + `/api/v2/app/invoke/result/${params}`
         )
       } catch (error) {
         return error
       }
+    },
+    async registerAcc({ dispatch, commit }, params) {
+      return axios.post(
+        process.env.VUE_APP_API + '/api/v2/app/register',
+        params
+      )
+    },
+    async loginAcc({ dispatch, commit }, params) {
+      return axios.post(process.env.VUE_APP_API + '/api/v2/app/login', params)
+    },
+    async addOwner({ dispatch, commit }, params) {
+      return axios.post(
+        process.env.VUE_APP_API + `/api/v2/app/add-owner/${params}`
+      )
     }
   }
 })

@@ -1,108 +1,112 @@
 <template>
   <div class="login">
     <div class="title">Sign In</div>
-    <div class="domain">Domain: {{domain}}</div>
+    <div class="domain">Domain: {{ domain }}</div>
     <div class="tips">
-      No account yet?,
-      <span @click="$router.push({ path:'/register'})">SIGN UP</span>
+      No account yet?
+      <span @click="$router.push({ path: '/register' })">SIGN UP</span>
     </div>
-    <div class="qrcode">
-      <img :src="url" alt />
+    <div class="form_area">
+      <el-form
+        :model="ruleForm"
+        :rules="rules"
+        ref="ruleForm"
+        label-width="100px"
+        class="demo-ruleForm"
+        status-icon
+      >
+        <el-form-item label="username" prop="userName">
+          <el-input autocomplete="off" v-model="ruleForm.userName"></el-input>
+        </el-form-item>
+        <el-form-item label="password" prop="password">
+          <el-input
+            type="password"
+            autocomplete="off"
+            v-model="ruleForm.password"
+          ></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="submitForm('ruleForm')"
+            >Sign in</el-button
+          >
+        </el-form-item>
+      </el-form>
     </div>
   </div>
 </template>
 
 <script>
-import QRCode from 'qrcode'
 export default {
   data() {
     return {
-      url: '',
-      dataId: '',
-      getResTimer: null,
-      domain: 'on.ont'
+      domain: 'on.ont',
+      ruleForm: {
+        password: '',
+        userName: ''
+      },
+      rules: {
+        userName: [
+          {
+            required: true,
+            message: 'Please enter username',
+            trigger: 'change'
+          },
+          {
+            min: 2,
+            max: 10,
+            message: '2 to 10 characters in length',
+            trigger: 'change'
+          }
+        ],
+        password: [
+          {
+            required: true,
+            pattern: /\S/,
+            message: 'Please enter password',
+            trigger: 'change'
+          }
+        ]
+      }
     }
   },
   methods: {
-    createQRcode(info) {
-      console.log('codeParams', info)
-      let codeParams = JSON.stringify(info)
-      QRCode.toDataURL(codeParams)
-        .then(url => {
-          this.url = url
-        })
-        .catch(err => {
-        })
-
-      this.getResTimer = setInterval(() => {
-        this.getLoginResult()
-      }, 3000)
-    },
-    async getLoginResult() {
-      try {
-        let res = await this.$store.dispatch('getLoginRes', this.dataId)
-        console.log('getLoginResult', res)
-        if (res.data.desc === 'SUCCESS') {
-          if (res.data.result && res.data.result.result === '1') {
-            sessionStorage.setItem('ons', res.data.result.userName)
-            sessionStorage.setItem('ontid', res.data.result.ontid)
-            this.$message({
-              message: 'Sign In Successful',
-              center: true,
-              type: 'success'
-            });
-            clearInterval(this.getResTimer)
-            this.$router.push({ path: '/' })
-            return false
-          } else if (res.data.result && res.data.result.result === '2') {
-            this.$message({
-              message: 'Please Sign Up ONS',
-              center: true,
-              type: 'error'
-            });
-            clearInterval(this.getResTimer)
-            this.$router.push({ path: '/register' })
-            return false
-          }
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.login()
         } else {
-          this.$message({
-            message: 'Get Sign In Result Fail!',
-            center: true,
-            type: 'error'
-          });
-          clearInterval(this.getResTimer)
+          console.log('error submit!!')
           return false
         }
+      })
+    },
+    async login() {
+      try {
+        let apiData = await this.$store.dispatch('loginAcc', this.ruleForm)
+        console.log(apiData)
+        const { desc, result } = apiData.data
+        if (desc === 'SUCCESS') {
+          this.$message({
+            message: 'Sign in Successful!',
+            center: true,
+            type: 'success'
+          })
+          sessionStorage.setItem('ons', result.userName)
+          sessionStorage.setItem('ontid', result.ontid)
+          this.$router.push({ path: '/' })
+        } else {
+          this.$message({
+            message: 'Sign in Fail!',
+            center: true,
+            type: 'error'
+          })
+        }
       } catch (error) {
-        clearInterval(this.getResTimer)
-        return false
+        throw error
       }
     }
   },
-  async mounted() {
-    try {
-      let result = await this.$store.dispatch('getLoginMsg')
-      console.log('loginmsg', result)
-      if (result.data.desc === 'SUCCESS') {
-        let info = result.data.result
-        console.log('info', info)
-        this.dataId = result.data.result.appId
-        this.createQRcode(info)
-      } else {
-        this.$message({
-          message: 'Get Message Fail!',
-          center: true,
-          type: 'error'
-        });
-        return false
-      }
-    } catch (error) {
-      return false
-    }
-  },
-  beforeDestroy() {
-    clearInterval(this.getResTimer)
-  },
+  mounted() {}
 }
 </script>
 <style lang="less" scoped>
@@ -127,18 +131,6 @@ export default {
       color: #2472cc;
       text-decoration: underline;
       cursor: pointer;
-    }
-  }
-  .qrcode {
-    width: 200px;
-    height: 200px;
-    margin: 0 auto;
-    margin-top: 50px;
-    // background: tomato;
-    img {
-      width: 100%;
-      height: 100%;
-      display: block;
     }
   }
 }
