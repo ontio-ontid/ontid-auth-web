@@ -33,7 +33,6 @@
 <script>
 // @ is an alias to /src
 import QRCode from 'qrcode'
-import { setInterval, clearInterval } from 'timers'
 
 export default {
   name: 'home',
@@ -64,8 +63,8 @@ export default {
       try {
         let res = await this.$store.dispatch('getInvokeMsg', this.ons)
         if (res.data.desc === 'SUCCESS') {
-          let info = res.data.result
-          this.dataId = res.data.result.appId
+          let info = res.data.result.qrCode
+          this.dataId = res.data.result.id
           this.createQRcode(info)
         } else {
           this.$message({
@@ -134,6 +133,7 @@ export default {
       }
     },
     async addOwnder() {
+      clearInterval(this.ownerTimer)
       let apiData = await this.$store.dispatch('addOwner', this.ontid)
       console.log(apiData)
       const { desc, result } = apiData.data
@@ -159,32 +159,37 @@ export default {
       if (desc === 'SUCCESS') {
         if (result.result === '1') {
           this.$message({
-            message: 'Transfer Contract Successful!',
+            message: 'Add Owner ID Successful!',
             center: true,
             type: 'success'
           })
-          clearInterval(this.ownerCheckId)
-          // this.url = ''
-          // this.dataId = ''
-          // this.hash = result.txHash
+          clearInterval(this.ownerTimer)
+          this.ownerUrl = ''
+          this.ownerCheckId = ''
+          this.ownerHash = result.txHash
           return true
         } else if (result.result === '0') {
           this.$message({
-            message: 'Transfer Contract Fail!',
+            message: 'Add Owner ID Fail!',
             center: true,
             type: 'error'
           })
-          clearInterval(this.ownerCheckId)
-          return false
+          return clearInterval(this.ownerTimer)
         } else {
         }
       } else {
-        clearInterval(this.ownerCheckId)
+        this.$message({
+          message: desc,
+          center: true,
+          type: 'error'
+        })
+        clearInterval(this.ownerTimer)
       }
     }
   },
   beforeDestroy() {
     clearInterval(this.invokeTimer)
+    clearInterval(this.ownerTimer)
   }
 }
 </script>
