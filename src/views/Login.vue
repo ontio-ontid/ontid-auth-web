@@ -1,10 +1,10 @@
 <template>
   <div class="login">
     <div class="title">Sign In</div>
-    <div class="domain">Domain: {{domain}}</div>
+    <div class="domain">Domain: {{ domain }}</div>
     <div class="tips">
       No account yet?,
-      <span @click="$router.push({ path:'/register'})">SIGN UP</span>
+      <span @click="$router.push({ path: '/register' })">SIGN UP</span>
     </div>
     <div class="qrcode">
       <img :src="url" alt />
@@ -31,8 +31,7 @@ export default {
         .then(url => {
           this.url = url
         })
-        .catch(err => {
-        })
+        .catch(err => {})
 
       this.getResTimer = setInterval(() => {
         this.getLoginResult()
@@ -50,7 +49,7 @@ export default {
               message: 'Sign In Successful',
               center: true,
               type: 'success'
-            });
+            })
             clearInterval(this.getResTimer)
             this.$router.push({ path: '/' })
             return false
@@ -59,7 +58,7 @@ export default {
               message: 'Please Sign Up ONS',
               center: true,
               type: 'error'
-            });
+            })
             clearInterval(this.getResTimer)
             this.$router.push({ path: '/register' })
             return false
@@ -69,7 +68,7 @@ export default {
             message: 'Get Sign In Result Fail!',
             center: true,
             type: 'error'
-          });
+          })
           clearInterval(this.getResTimer)
           return false
         }
@@ -84,16 +83,16 @@ export default {
       let result = await this.$store.dispatch('getLoginMsg')
       console.log('loginmsg', result)
       if (result.data.desc === 'SUCCESS') {
-        let info = result.data.result
+        let info = result.data.result.qrCode
         console.log('info', info)
-        this.dataId = result.data.result.appId
+        this.dataId = result.data.result.id
         this.createQRcode(info)
       } else {
         this.$message({
           message: 'Get Message Fail!',
           center: true,
           type: 'error'
-        });
+        })
         return false
       }
     } catch (error) {
@@ -102,7 +101,7 @@ export default {
   },
   beforeDestroy() {
     clearInterval(this.getResTimer)
-  },
+  }
 }
 </script>
 <style lang="less" scoped>
