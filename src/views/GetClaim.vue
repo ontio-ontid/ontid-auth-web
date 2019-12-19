@@ -1,7 +1,7 @@
 <template>
   <div class="get_claim_wrap">
-    <p v-if="!imgUrl">QR code acquisition failed, please try again!</p>
-    <img :src="imgUrl" alt="" />
+    <img v-if="imgUrl" :src="imgUrl" alt="" />
+    <p v-else>QR code acquisition failed, please try again!</p>
   </div>
 </template>
 
@@ -11,7 +11,7 @@ import QRCode from 'qrcode'
 export default {
   data() {
     return {
-      imgUrl: ''
+      imgUrl: true
     }
   },
   methods: {},
