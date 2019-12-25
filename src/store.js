@@ -74,6 +74,14 @@ export default new Vuex.Store({
       return axios.post(
         process.env.VUE_APP_API + `/api/v2/app/add-owner/${params}`
       )
+    },
+    async getLoginAppQrcode({ dispatch, commit }, params) {
+      return axios.post(process.env.VUE_APP_API + '/api/v2/app/login/owner')
+    },
+    async getQrcodeRes({ dispatch, commit }, params) {
+      return axios.get(
+        process.env.VUE_APP_API + `/api/v2/app/login/result/${params}`
+      )
     }
   }
 })

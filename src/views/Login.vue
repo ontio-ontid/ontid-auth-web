@@ -6,7 +6,13 @@
       No account yet?
       <span @click="$router.push({ path: '/register' })">SIGN UP</span>
     </div>
-    <div class="form_area">
+    <el-tabs class="tab_layout" v-model="activeName" @tab-click="handleClick">
+      <el-tab-pane label="Password login" name="password"></el-tab-pane>
+      <el-tab-pane label="QR code login" name="qrcode"></el-tab-pane>
+    </el-tabs>
+    <LoginFrom-div v-if="currentBoll"></LoginFrom-div>
+    <LoginQrCode-div v-else></LoginQrCode-div>
+    <!-- <div class="form_area">
       <el-form
         :model="ruleForm"
         :rules="rules"
@@ -31,78 +37,28 @@
           >
         </el-form-item>
       </el-form>
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script>
+import LoginFromDiv from '../components/LoginForm'
+import LoginQrCodeDiv from '../components/LoginQrcode'
 export default {
   data() {
     return {
       domain: 'on.ont',
-      ruleForm: {
-        password: '',
-        userName: ''
-      },
-      rules: {
-        userName: [
-          {
-            required: true,
-            message: 'Please enter username',
-            trigger: 'change'
-          },
-          {
-            min: 2,
-            max: 10,
-            message: '2 to 10 characters in length',
-            trigger: 'change'
-          }
-        ],
-        password: [
-          {
-            required: true,
-            pattern: /\S/,
-            message: 'Please enter password',
-            trigger: 'change'
-          }
-        ]
-      }
+      activeName: 'password',
+      currentBoll: true
     }
   },
+  components: { LoginFromDiv, LoginQrCodeDiv },
   methods: {
-    submitForm(formName) {
-      this.$refs[formName].validate(valid => {
-        if (valid) {
-          this.login()
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      })
-    },
-    async login() {
-      try {
-        let apiData = await this.$store.dispatch('loginAcc', this.ruleForm)
-        console.log(apiData)
-        const { desc, result } = apiData.data
-        if (desc === 'SUCCESS') {
-          this.$message({
-            message: 'Sign in Successful!',
-            center: true,
-            type: 'success'
-          })
-          sessionStorage.setItem('ons', result.userName)
-          sessionStorage.setItem('ontid', result.ontid)
-          this.$router.push({ path: '/' })
-        } else {
-          this.$message({
-            message: 'Sign in Fail!',
-            center: true,
-            type: 'error'
-          })
-        }
-      } catch (error) {
-        throw error
+    handleClick(tab, event) {
+      if (tab.name === 'password') {
+        this.currentBoll = true
+      } else {
+        this.currentBoll = false
       }
     }
   },
@@ -132,6 +88,11 @@ export default {
       text-decoration: underline;
       cursor: pointer;
     }
+  }
+  .tab_layout {
+    width: 500px;
+    margin: 0 auto;
+    margin-top: 40px;
   }
 }
 </style>
