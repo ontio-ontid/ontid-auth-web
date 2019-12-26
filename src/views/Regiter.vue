@@ -1,10 +1,10 @@
 <template>
   <div class="registrer">
     <div class="title">Sign Up</div>
-    <div class="domain">Domain: {{domain}}</div>
+    <div class="domain">Domain: {{ domain }}</div>
     <div class="tips">
       Already have an account?
-      <span @click="$router.push({ path:'/login'})">SIGN IN</span>
+      <span @click="$router.push({ path: '/login' })">SIGN IN</span>
     </div>
     <div class="enter_ons">
       <el-input
@@ -12,7 +12,9 @@
         v-model="ons"
         class="input-with-select"
       >
-        <el-button @click="sendOns" type="primary" slot="append">Apply</el-button>
+        <el-button @click="sendOns" type="primary" slot="append"
+          >Apply</el-button
+        >
       </el-input>
     </div>
     <div class="qrcode">
@@ -40,8 +42,7 @@ export default {
         .then(url => {
           this.url = url
         })
-        .catch(err => {
-        })
+        .catch(err => {})
       this.checkTimer = setInterval(() => {
         this.checkResult()
       }, 3000)
@@ -52,7 +53,7 @@ export default {
           message: 'Please Input Yours ONS!',
           center: true,
           type: 'success'
-        });
+        })
         return
       }
 
@@ -64,8 +65,8 @@ export default {
         console.log('res', res)
 
         if (res.data.desc === 'SUCCESS' && res.data.error === 0) {
-          let qrcodeParams = res.data.result
-          this.dataId = res.data.result.appId
+          let qrcodeParams = res.data.result.qrCode
+          this.dataId = res.data.result.id
           console.log('qrcodeParams', qrcodeParams)
           console.log('dataId', this.dataId)
           this.createQRcode(qrcodeParams)
@@ -74,7 +75,7 @@ export default {
             message: 'Sign Up Fail!',
             center: true,
             type: 'error'
-          });
+          })
           return
         }
       } catch (error) {
@@ -92,7 +93,7 @@ export default {
               message: 'Sign Up Successfuly!',
               center: true,
               type: 'success'
-            });
+            })
             clearInterval(this.checkTimer)
             this.$router.push({ path: '/login' })
             return true
@@ -102,7 +103,7 @@ export default {
               message: 'Sign Up Fail!',
               center: true,
               type: 'error'
-            });
+            })
             return false
           } else if (res.data.result.result === '2') {
             clearInterval(this.checkTimer)
@@ -110,17 +111,17 @@ export default {
               message: 'Already Registed!',
               center: true,
               type: 'error'
-            });
+            })
             return false
-          } else { }
-
+          } else {
+          }
         } else {
           clearInterval(this.checkTimer)
           this.$message({
             message: 'Sign Up Fail!',
             center: true,
             type: 'error'
-          });
+          })
           return false
         }
       } catch (error) {
@@ -131,7 +132,7 @@ export default {
   },
   beforeDestroy() {
     clearInterval(this.checkTimer)
-  },
+  }
 }
 </script>
 

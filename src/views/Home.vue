@@ -2,18 +2,18 @@
   <div class="home">
     <div class="account_name">
       Welcome!
-      <span class="ons">{{ons}}</span>
-      <span>(ONT ID: {{ontid}})</span>
-      <el-button @click="signOut" size="small" round style="margin-left: 20px;">Sign Out</el-button>
+      <span class="ons">{{ ons }}</span>
+      <span>(ONT ID: {{ ontid }})</span>
+      <el-button @click="signOut" size="small" round style="margin-left: 20px;"
+        >Sign Out</el-button
+      >
     </div>
     <p>
       <el-button type="primary" @click="getMsg()">Hello World</el-button>
     </p>
-    <div class="hex" v-if="hash">
-      TxHash: {{hash}}
-    </div>
+    <div class="hex" v-if="hash">TxHash: {{ hash }}</div>
     <div class="qrcode">
-      <img :src="url" alt>
+      <img :src="url" alt />
     </div>
   </div>
 </template>
@@ -21,7 +21,7 @@
 <script>
 // @ is an alias to /src
 import QRCode from 'qrcode'
-import { setInterval, clearInterval } from 'timers';
+import { setInterval, clearInterval } from 'timers'
 
 export default {
   name: 'home',
@@ -48,15 +48,15 @@ export default {
       try {
         let res = await this.$store.dispatch('getInvokeMsg', this.ons)
         if (res.data.desc === 'SUCCESS') {
-          let info = res.data.result
-          this.dataId = res.data.result.appId
+          let info = res.data.result.qrCode
+          this.dataId = res.data.result.id
           this.createQRcode(info)
         } else {
           this.$message({
             message: 'Get Invoke Message Fail!',
             center: true,
             type: 'error'
-          });
+          })
           return false
         }
       } catch (error) {
@@ -71,8 +71,7 @@ export default {
         .then(url => {
           this.url = url
         })
-        .catch(err => {
-        })
+        .catch(err => {})
 
       this.invokeTimer = setInterval(() => {
         this.getInvokeResult()
@@ -88,7 +87,7 @@ export default {
               message: 'Transfer Contract Successful!',
               center: true,
               type: 'success'
-            });
+            })
             clearInterval(this.invokeTimer)
             this.url = ''
             this.dataId = ''
@@ -99,16 +98,17 @@ export default {
               message: 'Transfer Contract Fail!',
               center: true,
               type: 'error'
-            });
+            })
             clearInterval(this.invokeTimer)
             return false
-          } else { }
+          } else {
+          }
         } else {
           this.$message({
             message: 'Transfer Contract Fail!',
             center: true,
             type: 'error'
-          });
+          })
           clearInterval(this.invokeTimer)
           return false
         }
@@ -120,7 +120,7 @@ export default {
   },
   beforeDestroy() {
     clearInterval(this.invokeTimer)
-  },
+  }
 }
 </script>
 
@@ -165,4 +165,3 @@ export default {
   }
 }
 </style>
-
