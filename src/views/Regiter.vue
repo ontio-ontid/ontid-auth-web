@@ -146,7 +146,7 @@ export default {
         let res = await this.$store.dispatch('getClaimMsg')
         console.log('claim res', res)
         if (res.data.desc === 'SUCCESS') {
-          let qrcodeParams = res.data.result
+          let qrcodeParams = res.data.result.qrCode
           this.claimCheckId = res.data.result.id
           console.log('qrcodeParams', qrcodeParams)
           console.log('dataId', this.dataId)
