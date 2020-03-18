@@ -143,7 +143,7 @@ export default {
     },
     async postChaim() {
       try {
-        let res = await this.$store.dispatch('getClaimMsg')
+        let res = await this.$store.dispatch('getClaimMsg', this.ons)
         console.log('claim res', res)
         if (res.data.desc === 'SUCCESS') {
           let qrcodeParams = res.data.result.qrCode
@@ -188,7 +188,13 @@ export default {
             // this.$router.push({ path: '/login' })
             this.claim_flag = false
             this.account_flag = true
-            this.sendOns()
+            // this.sendOns()
+            this.dataId = res.data.result.id
+            await this.createQRcode(res.data.result.qrCode)
+            // 检查注册结果
+            this.checkTimer = setInterval(() => {
+              this.checkResult()
+            }, 3000)
             return true
           } else if (res.data.result.result === '0') {
             clearInterval(this.claimTimer)

@@ -58,7 +58,9 @@ export default new Vuex.Store({
     },
     async getClaimMsg({dispatch, commit}, params) {
       try {
-        return axios.post(process.env.VUE_APP_API + '/api/v1/app/claim')
+        return axios.post(
+          process.env.VUE_APP_API + '/api/v1/app/claim?userName=' + params
+        )
       } catch (error) {
         return error
       }
